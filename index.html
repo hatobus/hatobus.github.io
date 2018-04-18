@@ -33,3 +33,28 @@
 	<p>
 	<img src="./pic/ieornsk.gif">
 	<img src="./pic/nsk.gif">
+
+<!--★コピーここから-->
+<script type="text/javascript"><!--
+/*============================================================
+画像１個マウスストーカー　参考サイト : http://www5e.biglobe.ne.jp/~purest/javascript/index.html
+=============================================================*/
+(function (){  //即時関数で囲んでグローバル変数を消すため、この行はこのままで
+
+var mga="./pic/hato_cursor.png"; //★画像指定
+var hx=-15;          //★表示位置 x座標。マウスと画像の横位置。マイナスで左
+var hy=15;          //★表示位置 y座標。マウスと画像の縦位置。マイナスで上
+
+//指定ここまで--------------------------------------------------------------
+document.onmousemove=function (e){ var ob=document.getElementById("Mo").style; ob.left=e.pageX+hx+"px"; ob.top=e.pageY+hy+"px";}
+document.write("<img src="+mga+" id='Mo' style='position:absolute;'>");
+}());//即時関数終了
+// --></script>
+<!--★コピーここまで-->    
+
+<!-- shinobi ct2 -->
+<script type="text/javascript" src="http://ct2.shinobi.jp/sc/1739907"></script>
+<noscript><a href="http://ct2.shinobi.jp/gg/1739907"><img src="http://ct2.shinobi.jp/ll/1739907" border="0" alt="カウンター" /></a></noscript>
+<!-- /shinobi ct2 -->
+</BODY>
+</HTML>
