@@ -5,6 +5,9 @@
 
 </HEAD>
 <BODY BGCOLOR="#ffffff" background="./pic/back.jpg">
+
+<body oncontextmenu="alert('右クリック禁止');return false">
+
 <P>
 
 <DIV ALIGN=CENTER><TABLE CELLSPACING=0 CELLPADDING=0 WIDTH=800>
@@ -53,9 +56,31 @@ document.write("<img src="+mga+" id='Mo' style='position:absolute;'>");
 // --></script>
 <!--★コピーここまで-->    
 
+
+<script src='https://cdn.mlkcca.com/v2.0.0/milkcocoa.js'></script>
+    <script src="./js_script/accesscounter.js"></script>
+    <script>
+        var mk = new window.MilkCocoa("onicovyhpw.mlkcca.com"),
+            ds;
+        site = location.hostname || "localhost";
+        page = location.pathname;
+        ds = mk.dataStore(site);
+        ds.get('TotalCount_Site', function (err, datum) {
+            var count = datum.value.count;
+            document.getElementById('accessCounter').textContent = 'あなたは' + count.toString() + '人目のお客様です！！';
+            mk.disconnect();
+        });
+    </script>
+
 <!-- shinobi ct2 -->
 <script type="text/javascript" src="http://ct2.shinobi.jp/sc/1739907"></script>
 <noscript><a href="http://ct2.shinobi.jp/gg/1739907"><img src="http://ct2.shinobi.jp/ll/1739907" border="0" alt="カウンター" /></a></noscript>
 <!-- /shinobi ct2 -->
+
+<!-- shinobi ct2 -->
+<script type="text/javascript" src="//ct2.shinobi.jp/sc/1739912"></script>
+<noscript><a href="//ct2.shinobi.jp/gg/1739912"><img src="//ct2.shinobi.jp/ll/1739912" border="0" alt="カウンター" /></a></noscript>
+<!-- /shinobi ct2 -->
+
 </BODY>
 </HTML>
