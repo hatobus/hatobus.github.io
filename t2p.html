@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Text to PNG for Rally Navigator</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #1f2937;
+      background: #f3f4f6;
+    }
+    body { margin: 0; padding: 24px; }
+    main { max-width: 1040px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0; color: #6b7280; line-height: 1.7; }
+    label { display: block; font-weight: 700; margin-bottom: 6px; }
+    textarea, input, select { width: 100%; box-sizing: border-box; font: inherit; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; background: #fff; }
+    textarea { min-height: 220px; resize: vertical; font-size: 18px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    button, a.button { appearance: none; border: 0; border-radius: 999px; padding: 10px 18px; font-weight: 700; cursor: pointer; background: #111827; color: #fff; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+    button.secondary { background: #e5e7eb; color: #111827; }
+    .hint { font-size: 13px; color: #6b7280; }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .preview-item { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; background: #fafafa; }
+    .checker { overflow: auto; background: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; border-radius: 10px; border: 1px solid #d1d5db; padding: 10px; }
+    canvas { display: block; max-width: 100%; height: auto; }
+    code { background: #f3f4f6; padding: 2px 5px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+<main>
+  <section class="card">
+    <h1>Text to PNG for Rally Navigator</h1>
+    <p>空行で区切ったテキストを、中央寄せのPNGとして複数生成します。ZIPで一括ダウンロードできます。</p>
+  </section>
+
+  <section class="card">
+    <label for="text">Text / Notes</label>
+    <textarea id="text">コンビニあり
+
+この先 溝あり
+通行注意！
+
+この先 ダート有
+滑りやすい</textarea>
+    <p class="hint">空行で別PNGになります。1つのPNG内で改行したい場合は普通にEnterで改行してください。</p>
+    <br>
+    <label for="file">Load .txt file</label>
+    <input type="file" id="file" accept=".txt,text/plain" />
+  </section>
+
+  <section class="card grid">
+    <div>
+      <label for="fontSize">Font size</label>
+      <input id="fontSize" type="number" min="8" max="200" value="44" />
+    </div>
+    <div>
+      <label for="paddingX">Padding X</label>
+      <input id="paddingX" type="number" min="0" max="200" value="16" />
+    </div>
+    <div>
+      <label for="paddingY">Padding Y</label>
+      <input id="paddingY" type="number" min="0" max="200" value="12" />
+    </div>
+    <div>
+      <label for="lineGap">Line gap</label>
+      <input id="lineGap" type="number" min="0" max="100" value="8" />
+    </div>
+    <div>
+      <label for="fontWeight">Font weight</label>
+      <select id="fontWeight">
+        <option value="700" selected>Bold</option>
+        <option value="400">Regular</option>
+      </select>
+    </div>
+    <div>
+      <label for="background">Background</label>
+      <select id="background">
+        <option value="transparent" selected>Transparent</option>
+        <option value="white">White</option>
+      </select>
+    </div>
+    <div>
+      <label for="textColor">Text color</label>
+      <input id="textColor" type="color" value="#000000" />
+    </div>
+    <div>
+      <label for="strokeWidth">Stroke width</label>
+      <input id="strokeWidth" type="number" min="0" max="20" value="0" />
+    </div>
+    <div>
+      <label for="strokeColor">Stroke color</label>
+      <input id="strokeColor" type="color" value="#ffffff" />
+    </div>
+    <div>
+      <label for="scale">Scale</label>
+      <select id="scale">
+        <option value="1" selected>1x</option>
+        <option value="2">2x</option>
+        <option value="3">3x</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="card actions">
+    <button id="generate">Generate previews</button>
+    <button id="downloadZip" class="secondary">Download ZIP</button>
+    <span id="info" class="hint"></span>
+  </section>
+
+  <section class="card">
+    <label>Previews</label>
+    <div id="previews" class="preview-grid"></div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  let renderedItems = [];
+
+  $('file').addEventListener('change', () => {
+    const file = $('file').files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      $('text').value = e.target.result;
+      generatePreviews();
+    };
+    reader.readAsText(file);
+  });
+
+  function hash10(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16).padStart(8, '0') + (str.length % 256).toString(16).padStart(2, '0');
+  }
+
+  function getOptions() {
+    return {
+      fontSize: Number($('fontSize').value),
+      paddingX: Number($('paddingX').value),
+      paddingY: Number($('paddingY').value),
+      lineGap: Number($('lineGap').value),
+      fontWeight: $('fontWeight').value,
+      background: $('background').value,
+      textColor: $('textColor').value,
+      strokeWidth: Number($('strokeWidth').value),
+      strokeColor: $('strokeColor').value,
+      scale: Number($('scale').value),
+    };
+  }
+
+  function fontString(opt) {
+    return `${opt.fontWeight} ${opt.fontSize * opt.scale}px "Noto Sans CJK JP", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif`;
+  }
+
+  function splitNotes(raw) {
+    return raw
+      .replace(/\r\n/g, '\n')
+      .split(/\n\s*\n/g)
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+
+  function renderNoteToCanvas(note, opt) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const lines = note.split('\n');
+    const scale = opt.scale;
+    const fontSize = opt.fontSize * scale;
+    const paddingX = opt.paddingX * scale;
+    const paddingY = opt.paddingY * scale;
+    const lineGap = opt.lineGap * scale;
+    const strokeWidth = opt.strokeWidth * scale;
+    const strokeExtra = strokeWidth * 2;
+
+    ctx.font = fontString(opt);
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'center';
+    ctx.lineJoin = 'round';
+
+    let maxWidth = 1;
+    for (const line of lines) {
+      maxWidth = Math.max(maxWidth, Math.ceil(ctx.measureText(line).width));
+    }
+
+    const lineHeight = Math.ceil(fontSize * 1.15);
+    const textHeight = lines.length * lineHeight + Math.max(0, lines.length - 1) * lineGap;
+
+    canvas.width = Math.ceil(maxWidth + paddingX * 2 + strokeExtra * 2);
+    canvas.height = Math.ceil(textHeight + paddingY * 2 + strokeExtra * 2);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (opt.background === 'white') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.font = fontString(opt);
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'center';
+    ctx.lineJoin = 'round';
+
+    const x = canvas.width / 2;
+    let y = paddingY + strokeExtra;
+    for (const line of lines) {
+      if (strokeWidth > 0) {
+        ctx.lineWidth = strokeWidth;
+        ctx.strokeStyle = opt.strokeColor;
+        ctx.strokeText(line, x, y);
+      }
+      ctx.fillStyle = opt.textColor;
+      ctx.fillText(line, x, y);
+      y += lineHeight + lineGap;
+    }
+
+    return canvas;
+  }
+
+  function canvasToBlob(canvas) {
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  }
+
+  function generatePreviews() {
+    const notes = splitNotes($('text').value);
+    const opt = getOptions();
+    const previews = $('previews');
+    previews.innerHTML = '';
+    renderedItems = [];
+
+    for (let i = 0; i < notes.length; i++) {
+      const note = notes[i];
+      const canvas = renderNoteToCanvas(note, opt);
+      const filename = `${String(i + 1).padStart(3, '0')}_${hash10(JSON.stringify({ note, opt }))}.png`;
+
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+
+      const title = document.createElement('div');
+      title.className = 'hint';
+      title.textContent = `${filename} / ${canvas.width}×${canvas.height}px`;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'checker';
+      wrap.appendChild(canvas);
+
+      const link = document.createElement('a');
+      link.className = 'button';
+      link.textContent = 'Download PNG';
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.style.marginTop = '10px';
+
+      item.appendChild(title);
+      item.appendChild(wrap);
+      item.appendChild(link);
+      previews.appendChild(item);
+
+      renderedItems.push({ filename, canvas });
+    }
+
+    $('info').textContent = `${renderedItems.length} PNG generated`;
+  }
+
+  async function downloadZip() {
+    if (!renderedItems.length) generatePreviews();
+    if (!renderedItems.length) return;
+
+    if (typeof JSZip === 'undefined') {
+      $('info').textContent = 'JSZip failed to load. Please check your internet connection or download PNGs individually.';
+      return;
+    }
+
+    $('info').textContent = 'Creating ZIP...';
+    const zip = new JSZip();
+    for (const item of renderedItems) {
+      const blob = await canvasToBlob(item.canvas);
+      zip.file(item.filename, blob);
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rallynavigator_notes_${new Date().toISOString().slice(0,10)}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    $('info').textContent = `Downloaded ZIP (${renderedItems.length} PNG)`;
+  }
+
+  $('generate').addEventListener('click', generatePreviews);
+  $('downloadZip').addEventListener('click', downloadZip);
+
+  for (const id of ['text', 'fontSize', 'paddingX', 'paddingY', 'lineGap', 'fontWeight', 'background', 'textColor', 'strokeWidth', 'strokeColor', 'scale']) {
+    $(id).addEventListener('input', generatePreviews);
+    $(id).addEventListener('change', generatePreviews);
+  }
+
+  generatePreviews();
+</script>
+</body>
+</html>
