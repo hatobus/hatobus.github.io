@@ -6,6 +6,15 @@ import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
 const el = (id) => document.getElementById(id);
 const paper = el('symbol').getContext('2d');
 
+// Larger icons help distinguish landmarks on phone-sized roadbooks.
+const ROADBOOK_LANDMARK_SCALES = {
+  rock: 1.55,
+  stump: 1.65,
+  flag: 1.55,
+  pole: 1.45,
+  hut: 1.55,
+};
+
 export function syncModes() {
   const s = state;
   for (const [id, on, label] of [
@@ -209,8 +218,9 @@ export function renderNote() {
   }
 
   if (entry.landmark) {
-    const iconX = entry.landmark.side === 'left' ? 58 : 172;
-    drawLandmarkIcon(paper, entry.landmark.type, iconX, 118, entry.landmark.side, 0.95);
+    const iconX = entry.landmark.side === 'left' ? 48 : 182;
+    const iconScale = ROADBOOK_LANDMARK_SCALES[entry.landmark.type] ?? 1.5;
+    drawLandmarkIcon(paper, entry.landmark.type, iconX, 118, entry.landmark.side, iconScale);
   }
 
   paper.beginPath();

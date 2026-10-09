@@ -2,7 +2,7 @@
 import { generate } from './course.js?v=20261010-landmarks-v4';
 import { state, resetState } from './state.js?v=20261010-landmarks-v4';
 import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v4';
-import { renderNote, syncModes } from './roadbook.js?v=20261010-landmarks-v4';
+import { renderNote, syncModes } from './roadbook.js?v=20261010-roadbook-icons-v5';
 import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v4';
 import { setupInput } from './input.js?v=20261010-landmarks-v4';
 const el=(id)=>document.getElementById(id);
