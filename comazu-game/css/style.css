@@ -1,0 +1,444 @@
+
+/* Game UI must never be selected or trigger text callouts while touching. */
+#game,#game * {
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent
+}
+#game button,#game canvas {
+  -webkit-user-drag:none
+}
+#mobile,#mobile * {
+  touch-action:none;
+  overscroll-behavior:contain
+}
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  background:#0b1715;
+  color:#ecf6f0;
+  font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif
+}
+#game {
+  max-width:980px;
+  margin:auto;
+  padding:12px
+}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+  flex-wrap:wrap
+}
+.identity {
+  display:flex;
+  gap:8px;
+  align-items:center
+}
+.logo {
+  background:#dcf17b;
+  color:#182c22;
+  border-radius:7px;
+  padding:5px 8px;
+  font-size:15px;
+  font-weight:900
+}
+.title {
+  font-weight:850;
+  letter-spacing:.02em;
+  font-size:16px
+}
+.sub {
+  font-size:11px;
+  color:#a6bbb1
+}
+.actions {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap
+}
+button {
+  border:1px solid #4c6859;
+  background:#263c32;
+  color:#f0f8f2;
+  border-radius:8px;
+  padding:8px 11px;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+  touch-action:none
+}
+button:active {
+  background:#b6d66f;
+  color:#142116
+}
+button.secondary {
+  background:#172c25
+}
+button.highlight {
+  background:#c7e786;
+  color:#1a2b21;
+  border-color:#d4ed9e
+}
+#viewport {
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+  border:1px solid #526a58;
+  background:#85c7d4
+}
+#view {
+  display:block;
+  width:100%;
+  height:350px;
+  touch-action:none;
+  cursor:grab
+}
+#view:active {
+  cursor:grabbing
+}
+.topbar {
+  position:absolute;
+  top:10px;
+  left:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  pointer-events:none
+}
+.pill {
+  background:#11241edb;
+  border:1px solid #7e988366;
+  padding:7px 10px;
+  border-radius:8px;
+  backdrop-filter:blur(5px);
+  font-size:11px
+}
+.pill b {
+  font-size:18px;
+  font-variant-numeric:tabular-nums
+}
+.routehint {
+  position:absolute;
+  right:8px;
+  top:10px;
+  font-size:11px;
+  background:#12261bd4;
+  padding:8px 10px;
+  border-radius:8px
+}
+.crosshair {
+  position:absolute;
+  top:46%;
+  left:50%;
+  width:10px;
+  height:10px;
+  border:1.5px solid #ffffffe8;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none
+}
+.feedback {
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  background:#162a22df;
+  border:1px solid #acc69a5c;
+  font-size:12px;
+  text-align:center;
+  padding:6px 13px;
+  border-radius:8px;
+  max-width:92%;
+  pointer-events:none
+}
+#mapwrap {
+  display:none;
+  position:absolute;
+  right:10px;
+  top:48px;
+  background:#0e211ce8;
+  border:1px solid #adc5a0;
+  border-radius:10px;
+  padding:8px;
+  z-index:4
+}
+#mapwrap.on {
+  display:block
+}
+#map {
+  width:210px;
+  height:180px;
+  display:block
+}
+.small {
+  font-size:10px;
+  color:#9eb5a6
+}
+#mobile {
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  right:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:5px;
+  pointer-events:none
+}
+.pad {
+  display:grid;
+  grid-template-columns:repeat(3,45px);
+  grid-template-rows:repeat(2,39px);
+  gap:3px;
+  pointer-events:auto
+}
+.pad button {
+  padding:0;
+  min-width:0;
+  font-size:19px;
+  background:#11251dcf;
+  border-color:#7fa28caa;
+  touch-action:none
+}
+.pad button.on {
+  background:#c7e786;
+  color:#183020
+}
+.pad .up {
+  grid-column:2
+}
+.pad .left {
+  grid-column:1;
+  grid-row:2
+}
+.pad .down {
+  grid-column:2;
+  grid-row:2
+}
+.pad .right {
+  grid-column:3;
+  grid-row:2
+}
+.pad .go {
+  grid-column:3;
+  grid-row:1
+}
+.touchhelp {
+  pointer-events:none;
+  font-size:10px;
+  background:#11251bbf;
+  border-radius:5px;
+  padding:5px 7px;
+  margin-bottom:6px
+}
+#below {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px
+}
+.panel {
+  border:1px solid #395548;
+  border-radius:11px;
+  background:#132820;
+  padding:12px
+}
+.panelhead {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  gap:7px;
+  font-weight:850;
+  font-size:12px;
+  letter-spacing:.07em
+}
+.panelhead span:last-child {
+  font-size:10px;
+  color:#bdd9ae
+}
+#bookrow {
+  display:flex;
+  gap:11px;
+  align-items:center
+}
+.symbol {
+  flex:none;
+  width:115px;
+  height:115px;
+  background:#eef4e2;
+  border-radius:8px;
+  border:3px solid #b7ccab
+}
+#note {
+  flex:1;
+  min-width:0
+}
+#note .km {
+  color:#d9f49a;
+  font-size:24px;
+  font-variant-numeric:tabular-nums;
+  font-weight:800
+}
+#note .detail {
+  font-size:13px;
+  color:#e0e8d8;
+  margin:5px 0
+}
+#note .caption {
+  color:#a3bba9;
+  font-size:11px;
+  line-height:1.5
+}
+.buttons {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:10px
+}
+.buttons button {
+  flex:1;
+  min-width:80px
+}
+.statrow {
+  display:flex;
+  justify-content:space-between;
+  gap:7px;
+  font-size:12px;
+  border-bottom:1px solid #315044;
+  padding:9px 0
+}
+.statrow strong {
+  font-variant-numeric:tabular-nums;
+  color:#e4f59d
+}
+.info {
+  color:#bbcebe;
+  font-size:11px;
+  line-height:1.65;
+  margin-top:9px
+}
+.message {
+  background:#2c4838;
+  border-radius:8px;
+  padding:8px 9px;
+  margin-top:9px;
+  color:#ddf1d1;
+  font-size:11px
+}
+#win {
+  display:none;
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:#0e241ee8;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px
+}
+#win.on {
+  display:flex
+}
+#win h2 {
+  font-size:28px;
+  color:#d9f79b;
+  margin:0 0 8px
+}
+#win p {
+  line-height:1.7
+}
+#win button {
+  margin-top:15px;
+  padding:12px 20px
+}
+@media(max-width:630px) {
+  #game {
+  padding:7px
+}
+.title {
+  font-size:14px
+}
+#view {
+  height:320px
+}
+#below {
+  grid-template-columns:1fr;
+  gap:7px
+}
+.panel {
+  padding:10px
+}
+.symbol {
+  width:105px;
+  height:105px
+}
+.routehint {
+  display:none
+}
+.feedback {
+  bottom:112px;
+  font-size:10px
+}
+.touchhelp {
+  display:none
+}
+.pad {
+  grid-template-columns:repeat(3,46px);
+  grid-template-rows:repeat(2,42px)
+}
+}
+/* Accessible persistent mode switches: tapping must not interrupt walking. */
+.modeactions {
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  pointer-events:auto;
+  min-width:122px
+}
+.modeactions button {
+  min-height:43px;
+  padding:8px 10px;
+  font-size:12px;
+  background:#152c23e8;
+  border-color:#8aab8c;
+  box-shadow:0 1px 5px #07171144
+}
+.modeactions button.on {
+  background:#d2ec8b;
+  color:#183221;
+  border-color:#e1f4a9
+}
+.modeactions button:focus-visible {
+  outline:3px solid #e1f4a9;
+  outline-offset:1px
+}
+#tripmode {
+  display:block;
+  color:#b7cbb6;
+  font-weight:700;
+  font-size:10px;
+  margin-top:1px
+}
+#tripmode.reverse {
+  color:#ffda8b
+}
+@media(max-width:400px) {
+  .modeactions {
+  min-width:108px
+}
+.modeactions button {
+  font-size:11px;
+  padding:6px
+}
+.pad {
+  grid-template-columns:repeat(3,44px);
+  grid-template-rows:repeat(2,41px)
+}
+}

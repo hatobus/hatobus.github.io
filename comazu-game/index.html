@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマ図ウォーク</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="game">
+<header>
+<div class="identity">
+<span class="logo">↱</span>
+<div>
+<div class="title">コマ図ウォーク <span style="font-size:11px;color:#c6e38d">α DEMO</span>
+</div>
+<div class="sub">PROCEDURAL FOREST NAVIGATION</div>
+</div>
+</div>
+<div class="actions">
+<button id="new" class="highlight">↻ 新しいコース</button>
+<button id="mapbtn" class="secondary">地図（確認用）</button>
+</div>
+</header>
+<div id="viewport">
+<canvas id="view">
+</canvas>
+<div class="topbar">
+<div class="pill">TRIP <b id="trip">0.000</b> km <span id="tripmode">加算中 ＋</span>
+</div>
+<div class="pill">TIME <b id="clock">00:00</b>
+</div>
+</div>
+<div class="routehint" id="seed">
+</div>
+<div class="crosshair">
+</div>
+<div class="feedback" id="feedback">道路をたどり、コマ図を頼りにゴールへ</div>
+<div id="mapwrap">
+<div class="small">デバッグ地図：黄＝正解 / 白＝現在地</div>
+<canvas id="map" width="420" height="360">
+</canvas>
+</div>
+<div id="mobile">
+<div class="pad">
+<button class="up" data-hold="forward" aria-label="前進">▲</button>
+<button class="left" data-hold="turnL" aria-label="左を向く">◀</button>
+<button class="down" data-hold="back" aria-label="後退">▼</button>
+<button class="right" data-hold="turnR" aria-label="右を向く">▶</button>
+</div>
+<div class="modeactions">
+<button type="button" id="runmode" aria-pressed="false" aria-label="走るモードを切り替え">🏃 走る OFF</button>
+<button type="button" id="returnmode" aria-pressed="false" aria-label="戻るモードを切り替え">↩ 戻る OFF</button>
+</div>
+</div>
+<div id="win">
+<div>
+<h2>GOAL!</h2>
+<p id="result">
+</p>
+<button id="again" class="highlight">別のコースを生成する</button>
+</div>
+</div>
+</div>
+<div id="below">
+<section class="panel">
+<div class="panelhead">ROADBOOK <span id="pos">01 / 01</span>
+</div>
+<div id="bookrow">
+<canvas id="symbol" class="symbol" width="230" height="230">
+</canvas>
+<div id="note">
+<div class="km">0.000 km</div>
+<div class="detail">START</div>
+<div class="caption">コマ図を手動で送り、距離と分岐を照らし合わせてください。</div>
+</div>
+</div>
+<div class="buttons">
+<button id="prev">← 前のコマ</button>
+<button id="next" class="highlight">次のコマ →</button>
+<button id="minus">距離 −10m</button>
+<button id="plus">距離 +10m</button>
+</div>
+</section>
+<section class="panel">
+<div class="panelhead">STAGE DATA <span>SOLO / FOOT</span>
+</div>
+<div class="statrow">
+<span>正解ルートの長さ</span>
+<strong id="distance">—</strong>
+</div>
+<div class="statrow">
+<span>コマ図の枚数</span>
+<strong id="notes">—</strong>
+</div>
+<div class="statrow">
+<span>現在の目印</span>
+<strong id="landmark">—</strong>
+</div>
+<div class="info">PC：WASD移動／矢印左右で視点回転／↑↓でコマ送り／Fで走る切替／Rで戻る切替／Shiftを押しながら加速。画面ドラッグでも方向転換できます。<br>スマホ：左下の▲▼で移動・◀▶で方向転換。右下の「走る」は速度切替、「戻る」は移動距離の自動減算切替。コマ図は下のボタンで操作。</div>
+<div class="message">※ 自動生成の試遊版です。地図は通常非表示。道を間違えても警告は出ません。戻るモード中は歩く向きに関係なく移動した分だけTRIPを減算し、0m未満にはなりません。距離補正はメーター表示のみに反映されます。</div>
+</section>
+</div>
+</div>
+<script type="module" src="./src/main.js">
+</script>
+</body>
+</html>
