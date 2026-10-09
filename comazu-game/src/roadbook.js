@@ -1,7 +1,8 @@
 // Roadbook canvas and trip / mode UI.
-import { LANDMARK_TYPES } from './course.js?v=20261010-landmarks-v4';
+import { LANDMARK_TYPES } from './course.js?v=20261010-cap-v9';
 import { state } from './state.js?v=20261010-landmarks-v4';
 import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
+import { formatCap } from './heading.js?v=20261010-cap-v9';
 
 const el = (id) => document.getElementById(id);
 const paper = el('symbol').getContext('2d');
@@ -137,6 +138,7 @@ export function renderNote() {
 
   el('pos').textContent = `${String(s.note + 1).padStart(2, '0')} / ${String(course.book.length).padStart(2, '0')}`;
   el('note').querySelector('.km').textContent = `${(entry.km / 1000).toFixed(3)} km`;
+  el('note').querySelector('.cap').textContent = `CAP ${formatCap(entry.cap)}`;
   el('note').querySelector('.detail').textContent =
     entry.landmark?.description ?? (entry.next === undefined ? 'ゴール' : entry.prev === undefined ? 'スタート' : entry.label);
   el('note').querySelector('.caption').textContent =
@@ -151,6 +153,10 @@ export function renderNote() {
   paper.clearRect(0, 0, 230, 230);
   paper.fillStyle = '#f1f5e9';
   paper.fillRect(0, 0, 230, 230);
+  paper.fillStyle = '#355545';
+  paper.textAlign = 'left';
+  paper.font = 'bold 17px sans-serif';
+  paper.fillText(`CAP ${formatCap(entry.cap)}`, 12, 24);
 
   let inx;
   let inz;

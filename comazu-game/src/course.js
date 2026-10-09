@@ -1,5 +1,6 @@
 // Seeded course / route / roadbook generation: no browser dependencies.
 import { clamp, hypot, rng } from './math.js?v=20261010-landmarks-v4';
+import { roadDepartureCap } from './heading.js?v=20261010-cap-v9';
 
 export const LANDMARK_TYPES = {
   pole: {
@@ -175,6 +176,11 @@ export function generate(seed) {
       next: route[i + 1],
       label: i === 0 ? 'スタート' : i === route.length - 1 ? 'ゴール' : '分岐',
     });
+  }
+
+  // Direction of the road leaving each note; the goal has no outgoing road.
+  for (const item of book) {
+    item.cap = roadDepartureCap(roads, item.id, item.next);
   }
 
   const landmarks = [];

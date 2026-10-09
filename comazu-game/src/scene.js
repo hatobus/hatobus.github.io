@@ -413,7 +413,6 @@ export function render() {
   }
 
   el('landmark').textContent = closestLabel;
-  el('feedback').textContent = `近くの目印：${closestLabel}`;
 
   if (el('mapwrap').classList.contains('on')) {
     drawMap();

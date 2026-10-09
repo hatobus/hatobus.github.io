@@ -143,20 +143,6 @@ button.highlight {
   transform:translate(-50%,-50%);
   pointer-events:none
 }
-.feedback {
-  position:absolute;
-  left:50%;
-  bottom:10px;
-  transform:translateX(-50%);
-  background:#162a22df;
-  border:1px solid #acc69a5c;
-  font-size:12px;
-  text-align:center;
-  padding:6px 13px;
-  border-radius:8px;
-  max-width:92%;
-  pointer-events:none
-}
 #mapwrap {
   display:none;
   position:absolute;
@@ -384,10 +370,6 @@ button.highlight {
 .routehint {
   display:none
 }
-.feedback {
-  bottom:112px;
-  font-size:10px
-}
 .touchhelp {
   display:none
 }
@@ -490,7 +472,6 @@ button.highlight {
   border-color:#d4ed9e;
 }
 /* Explanations only: the roadbook symbol, distance and route remain available. */
-#game.hints-off #feedback,
 #game.hints-off #note .detail,
 #game.hints-off #note .caption,
 #game.hints-off #landmarkrow { display:none; }
@@ -500,3 +481,8 @@ button.highlight {
     padding:8px 9px;
   }
 }
+
+/* CAP always remains visible, even with hints turned off. */
+.cap-pill b { font-variant-numeric:tabular-nums; }
+#note .cap { display:inline-block; margin:5px 0 2px; color:#e3f4b1; font-size:15px; font-weight:850; font-variant-numeric:tabular-nums; letter-spacing:.05em; }
+@media(max-width:630px) { .topbar {gap:4px;} .pill {padding:6px 7px;font-size:10px;} .pill b {font-size:16px;} }
