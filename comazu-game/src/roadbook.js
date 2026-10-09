@@ -7,12 +7,13 @@ const el = (id) => document.getElementById(id);
 const paper = el('symbol').getContext('2d');
 
 // Larger icons help distinguish landmarks on phone-sized roadbooks.
+// Scales use the roadbook's 230×230 intrinsic canvas coordinates.
 const ROADBOOK_LANDMARK_SCALES = {
-  rock: 1.55,
-  stump: 1.65,
-  flag: 1.55,
-  pole: 1.45,
-  hut: 1.55,
+  rock: 2.70,
+  stump: 2.85,
+  flag: 2.70,
+  pole: 2.75,
+  hut: 2.65,
 };
 
 export function syncModes() {
@@ -218,8 +219,9 @@ export function renderNote() {
   }
 
   if (entry.landmark) {
-    const iconX = entry.landmark.side === 'left' ? 48 : 182;
-    const iconScale = ROADBOOK_LANDMARK_SCALES[entry.landmark.type] ?? 1.5;
+    const iconX = entry.landmark.side === 'left' ? 42 : 188;
+    // Roadbook is displayed at a smaller CSS size on phones. Draw large symbols.
+    const iconScale = ROADBOOK_LANDMARK_SCALES[entry.landmark.type] ?? 2.65;
     drawLandmarkIcon(paper, entry.landmark.type, iconX, 118, entry.landmark.side, iconScale);
   }
 

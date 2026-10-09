@@ -271,8 +271,8 @@ button.highlight {
 }
 .symbol {
   flex:none;
-  width:115px;
-  height:115px;
+  width:138px;
+  height:138px;
   background:#eef4e2;
   border-radius:8px;
   border:3px solid #b7ccab
@@ -377,8 +377,9 @@ button.highlight {
   padding:10px
 }
 .symbol {
-  width:105px;
-  height:105px
+  width:min(140px, 39vw);
+  height:auto;
+  aspect-ratio:1
 }
 .routehint {
   display:none
@@ -444,14 +445,14 @@ button.highlight {
 }
 }
 
-/* Accessible restart control beneath the roadbook and stage data. */
+/* Same-course restart appears immediately after the game viewport. */
 .restartbar {
   display:flex;
   justify-content:center;
   align-items:center;
   gap:12px;
   flex-wrap:wrap;
-  padding:14px 0 7px;
+  padding:9px 0 2px;
 }
 .restartbar button {
   padding:12px 18px;
@@ -469,7 +470,7 @@ button.highlight {
     display:flex;
     flex-direction:column;
     gap:6px;
-    padding:14px 4px 10px;
+    padding:8px 3px 4px;
   }
   .restartbar button {
     width:100%;
