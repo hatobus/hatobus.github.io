@@ -5,6 +5,7 @@ import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v4';
 import { renderNote, syncModes } from './roadbook.js?v=20261010-roadbook-large-v6';
 import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v4';
 import { setupInput } from './input.js?v=20261010-roadbook-large-v6';
+import { moveWithinRoad } from './movement.js?v=20261010-road-only-v7';
 const el=(id)=>document.getElementById(id);
 
 function start(seed){
@@ -31,13 +32,15 @@ function tick(t){
     let k=s.keys,move=(k.has('forward')||k.has('w')||k.has('ArrowUp')?1:0)-(k.has('back')||k.has('s')?1:0),side=(k.has('d')?1:0)-(k.has('a')?1:0);
     let turn=(k.has('turnR')||k.has('ArrowRight')?1:0)-(k.has('turnL')||k.has('ArrowLeft')?1:0);
     s.yaw+=turn*delta*1.8;
-    let speed=(s.runMode||k.has('Shift')?18:9)*delta,slip=s.course.dRoad(s.x,s.z)>7?.62:1;
+    const speed=(s.runMode||k.has('Shift')?18:9)*delta;
     let dx=Math.sin(s.yaw)*move+Math.cos(s.yaw)*side,dz=Math.cos(s.yaw)*move-Math.sin(s.yaw)*side,mag=Math.max(1,hypot(dx,dz));
-    dx=dx/mag*speed*slip;
-    dz=dz/mag*speed*slip;
-    s.x+=dx;
-    s.z+=dz;
-    const moved=hypot(dx,dz);
+    dx=dx/mag*speed;
+    dz=dz/mag*speed;
+    const oldX=s.x,oldZ=s.z;
+    const position=moveWithinRoad(s.course,s.x,s.z,dx,dz);
+    s.x=position.x;
+    s.z=position.z;
+    const moved=hypot(s.x-oldX,s.z-oldZ);
     s.actualDistance+=moved;
     s.trip=Math.max(0,s.trip+(s.returnMode?-moved:moved));
     if(s.passed<s.course.route.length){
