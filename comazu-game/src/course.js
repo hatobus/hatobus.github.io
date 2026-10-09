@@ -1,5 +1,5 @@
 // Seeded course / route / roadbook generation: no browser dependencies.
-import { clamp, hypot, rng } from './math.js';
+import { clamp, hypot, rng } from './math.js?v=20261010-landmarks-v3';
 
 export const LANDMARK_TYPES = {
   pole: {

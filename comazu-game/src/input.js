@@ -1,7 +1,7 @@
 // Keyboard, pointer and touch controls.
-import { state } from './state.js';
-import { note, syncModes } from './roadbook.js';
-import { drawMap } from './scene.js';
+import { state } from './state.js?v=20261010-landmarks-v3';
+import { note, syncModes } from './roadbook.js?v=20261010-landmarks-v3';
+import { drawMap } from './scene.js?v=20261010-landmarks-v3';
 const el = (id) => document.getElementById(id);
 
 export function setupInput(start) {

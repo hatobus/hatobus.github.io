@@ -1,6 +1,6 @@
 // Lightweight perspective projection: flat 3D-like world on Canvas 2D.
-import { state } from './state.js';
-import { TAU, clamp, hypot } from './math.js';
+import { state } from './state.js?v=20261010-landmarks-v3';
+import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v3';
 
 const el = (id) => document.getElementById(id);
 const view = el('view');

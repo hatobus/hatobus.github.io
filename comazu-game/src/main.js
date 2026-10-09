@@ -1,10 +1,10 @@
 // Game bootstrap, movement and finish detection.
-import { generate } from './course.js';
-import { state, resetState } from './state.js';
-import { clamp, hypot, formatTime } from './math.js';
-import { renderNote, syncModes } from './roadbook.js';
-import { render, drawMap, resize } from './scene.js';
-import { setupInput } from './input.js';
+import { generate } from './course.js?v=20261010-landmarks-v3';
+import { state, resetState } from './state.js?v=20261010-landmarks-v3';
+import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v3';
+import { renderNote, syncModes } from './roadbook.js?v=20261010-landmarks-v3';
+import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v3';
+import { setupInput } from './input.js?v=20261010-landmarks-v3';
 const el = (id) => document.getElementById(id);
 
 function start(seed){
