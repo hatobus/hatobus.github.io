@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>コマ図ウォーク</title>
-<link rel="stylesheet" href="./css/style.css?v=20261010-landmarks-v3">
+<title>コマ図ウォーク | コマ図ウォーク</title>
+<link rel="stylesheet" href="./css/style.css?v=20261010-landmarks-v4">
 </head>
 <body>
 <div id="game">
@@ -12,7 +12,7 @@
 <div class="identity">
 <span class="logo">↱</span>
 <div>
-<div class="title">コマ図ウォーク <span style="font-size:11px;color:#c6e38d">α v0.3 · LANDMARKS</span>
+<div class="title">コマ図ウォーク <span style="font-size:11px;color:#c6e38d">α v0.4 · LANDMARKS</span>
 </div>
 <div class="sub">PROCEDURAL FOREST NAVIGATION</div>
 </div>
@@ -101,8 +101,12 @@
 <div class="message">※ 自動生成の試遊版です。地図は通常非表示。道を間違えても警告は出ません。戻るモード中は歩く向きに関係なく移動した分だけTRIPを減算し、0m未満にはなりません。距離補正はメーター表示のみに反映されます。</div>
 </section>
 </div>
+<div class="restartbar">
+  <button id="restart" type="button" aria-label="同じコースをスタート地点からやり直す">↺ スタート地点に戻る</button>
+  <span>同じコースを最初からやり直します（距離・時間・コマ図をリセット）</span>
 </div>
-<script type="module" src="./src/main.js?v=20261010-landmarks-v3">
+</div>
+<script type="module" src="./src/main.js?v=20261010-landmarks-v4">
 </script>
 </body>
 </html>

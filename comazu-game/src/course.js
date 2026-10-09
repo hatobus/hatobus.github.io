@@ -1,5 +1,5 @@
 // Seeded course / route / roadbook generation: no browser dependencies.
-import { clamp, hypot, rng } from './math.js?v=20261010-landmarks-v3';
+import { clamp, hypot, rng } from './math.js?v=20261010-landmarks-v4';
 
 export const LANDMARK_TYPES = {
   pole: {
@@ -24,7 +24,7 @@ export const LANDMARK_TYPES = {
     label: '切り株',
     sideOffset: 10,
     forwardOffset: 4,
-    scale: 1.1,
+    scale: 1.45,
   },
   hut: {
     label: '小さな小屋',
@@ -208,6 +208,8 @@ export function generate(seed) {
     const x = (random() - 0.5) * 390;
     const z = (random() - 0.5) * 390;
     if (dRoad(x, z) < 8.5) continue;
+    // Keep the actual roadbook landmarks visible from the junction.
+    if (landmarks.some((landmark) => hypot(x - landmark.x, z - landmark.z) < (landmark.type === 'stump' ? 7 : 5.5))) continue;
     trees.push({
       x,
       z,

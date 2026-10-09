@@ -1,11 +1,11 @@
-// Keyboard, pointer and touch controls.
-import { state } from './state.js?v=20261010-landmarks-v3';
-import { note, syncModes } from './roadbook.js?v=20261010-landmarks-v3';
-import { drawMap } from './scene.js?v=20261010-landmarks-v3';
-const el = (id) => document.getElementById(id);
+// Keyboard, mouse and touch event bindings.
+import { state } from './state.js?v=20261010-landmarks-v4';
+import { note, syncModes } from './roadbook.js?v=20261010-landmarks-v4';
+import { drawMap } from './scene.js?v=20261010-landmarks-v4';
+const el=(id)=>document.getElementById(id);
 
 export function setupInput(start) {
-  const view=el('view');
+const view=el('view');
 el('runmode').addEventListener('click',()=>{
   state.runMode=!state.runMode;
   syncModes()
@@ -31,6 +31,11 @@ el('minus').addEventListener('click',()=>{
 const newCourse=()=>start((Math.random()*4294967295)>>>0);
 el('new').addEventListener('click',newCourse);
 el('again').addEventListener('click',newCourse);
+el('restart').addEventListener('click', () => {
+  const currentSeed = state.course.seed;
+  start(currentSeed); // Same course; reset position, trip, time, roadbook and modes.
+  el('viewport').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 el('mapbtn').addEventListener('click',()=>{
   let on=el('mapwrap').classList.toggle('on');
   el('mapbtn').textContent=on?'地図を隠す':'地図（確認用）';

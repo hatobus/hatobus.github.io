@@ -1,11 +1,11 @@
-// Game bootstrap, movement and finish detection.
-import { generate } from './course.js?v=20261010-landmarks-v3';
-import { state, resetState } from './state.js?v=20261010-landmarks-v3';
-import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v3';
-import { renderNote, syncModes } from './roadbook.js?v=20261010-landmarks-v3';
-import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v3';
-import { setupInput } from './input.js?v=20261010-landmarks-v3';
-const el = (id) => document.getElementById(id);
+// Application entrypoint / frame loop.
+import { generate } from './course.js?v=20261010-landmarks-v4';
+import { state, resetState } from './state.js?v=20261010-landmarks-v4';
+import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v4';
+import { renderNote, syncModes } from './roadbook.js?v=20261010-landmarks-v4';
+import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v4';
+import { setupInput } from './input.js?v=20261010-landmarks-v4';
+const el=(id)=>document.getElementById(id);
 
 function start(seed){
   let course=generate(seed),p=course.pts[course.route[0]],next=course.pts[course.route[1]];
@@ -60,7 +60,7 @@ function tick(t){
 }
 
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
 start(20261009);
 setupInput(start);
 requestAnimationFrame(tick);

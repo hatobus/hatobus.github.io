@@ -1,6 +1,6 @@
 // Lightweight perspective projection: flat 3D-like world on Canvas 2D.
-import { state } from './state.js?v=20261010-landmarks-v3';
-import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v3';
+import { state } from './state.js?v=20261010-landmarks-v4';
+import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
 
 const el = (id) => document.getElementById(id);
 const view = el('view');
@@ -16,9 +16,20 @@ export function resize() {
   ctx.setTransform(pr, 0, 0, pr, 0, 0);
 }
 
+// The minimap itself is displayed at half of its canvas resolution.
+// Keep the landmark pictograms legible even at mobile sizes.
+const MAP_LANDMARK_SCALE = 1.85;
+
 function drawMapIcon(context, type, x, y, scale = 1) {
   context.save();
   context.translate(x, y);
+  context.fillStyle = '#142a21';
+  context.strokeStyle = '#d5edb5';
+  context.lineWidth = 1.7;
+  context.beginPath();
+  context.arc(0, 0, 10.2, 0, TAU);
+  context.fill();
+  context.stroke();
   context.scale(scale, scale);
   context.lineWidth = 1.5;
   context.lineJoin = 'round';
@@ -176,17 +187,19 @@ export function render() {
           }
           case 'stump': {
             const base = project(v, 0);
-            const top = project(v, 1.2 * landmark.scale);
+            // Stumps are short in real life, but the old sprite was almost
+            // invisible from the road. Widen the trunk and brighten its top.
+            const top = project(v, 1.5 * landmark.scale);
             const h = base.y - top.y;
-            const w = h * 0.42;
+            const w = h * 0.60;
             ctx.fillStyle = '#7b5537';
             ctx.fillRect(base.x - w * 0.45, top.y + h * 0.2, w * 0.9, h * 0.8);
             ctx.fillStyle = '#d0a37a';
             ctx.beginPath();
             ctx.ellipse(base.x, top.y + h * 0.2, w * 0.5, h * 0.15, 0, 0, TAU);
             ctx.fill();
-            ctx.strokeStyle = '#a6764f';
-            ctx.lineWidth = Math.max(1, h * 0.05);
+            ctx.strokeStyle = '#65452d';
+            ctx.lineWidth = Math.max(1.5, h * 0.065);
             ctx.beginPath();
             ctx.ellipse(base.x, top.y + h * 0.2, w * 0.25, h * 0.07, 0, 0, TAU);
             ctx.stroke();
@@ -454,7 +467,7 @@ export function drawMap() {
 
   for (const landmark of course.landmarks) {
     const a = p(landmark.x, landmark.z);
-    drawMapIcon(mini, landmark.type, a.x, a.y, 1);
+    drawMapIcon(mini, landmark.type, a.x, a.y, MAP_LANDMARK_SCALE);
   }
 
   const player = p(state.x, state.z);

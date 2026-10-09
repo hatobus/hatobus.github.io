@@ -1,7 +1,7 @@
 // Roadbook canvas and trip / mode UI.
-import { LANDMARK_TYPES } from './course.js?v=20261010-landmarks-v3';
-import { state } from './state.js?v=20261010-landmarks-v3';
-import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v3';
+import { LANDMARK_TYPES } from './course.js?v=20261010-landmarks-v4';
+import { state } from './state.js?v=20261010-landmarks-v4';
+import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
 
 const el = (id) => document.getElementById(id);
 const paper = el('symbol').getContext('2d');
