@@ -1,126 +1,241 @@
-// Seeded course / route / roadbook generation, without browser dependencies.
+// Seeded course / route / roadbook generation: no browser dependencies.
 import { clamp, hypot, rng } from './math.js';
-const names=['木の看板','白いポール','大きな岩','赤い旗','切り株','小さな小屋'];
 
-export function generate(seed){
-  let r=rng(seed),pts=[],adj=Array.from({
-    length:25
+export const LANDMARK_TYPES = {
+  pole: {
+    label: '白いポール',
+    sideOffset: 11,
+    forwardOffset: 4,
+    scale: 1.0,
+  },
+  rock: {
+    label: '大きな岩',
+    sideOffset: 12,
+    forwardOffset: 5,
+    scale: 1.35,
+  },
+  flag: {
+    label: '赤い旗',
+    sideOffset: 10,
+    forwardOffset: 6,
+    scale: 1.0,
+  },
+  stump: {
+    label: '切り株',
+    sideOffset: 10,
+    forwardOffset: 4,
+    scale: 1.1,
+  },
+  hut: {
+    label: '小さな小屋',
+    sideOffset: 15,
+    forwardOffset: 7,
+    scale: 1.15,
+  },
+};
+
+const LANDMARK_KEYS = Object.keys(LANDMARK_TYPES);
+
+function normalize(x, z) {
+  const len = Math.hypot(x, z) || 1;
+  return { x: x / len, z: z / len };
+}
+
+function buildLandmark(bookItem, pts, random) {
+  if (bookItem.prev === undefined || bookItem.next === undefined) {
+    return null;
   }
-  ,()=>[]),edges=[],possible=[];
-  for(let z=0;
-  z<5;
-  z++)for(let x=0;
-  x<5;
-  x++){
-    let id=z*5+x;
-    pts.push({
-      x:(x-2)*59+(r()-.5)*15,z:(z-2)*59+(r()-.5)*15,id,name:names[Math.floor(r()*names.length)]
+
+  const center = pts[bookItem.id];
+  const prev = pts[bookItem.prev];
+  const next = pts[bookItem.next];
+  const forward = normalize(center.x - prev.x, center.z - prev.z);
+  const right = { x: forward.z, z: -forward.x };
+
+  const type = LANDMARK_KEYS[Math.floor(random() * LANDMARK_KEYS.length)];
+  const meta = LANDMARK_TYPES[type];
+  const side = random() < 0.5 ? 'left' : 'right';
+  const sideSign = side === 'left' ? -1 : 1;
+
+  const x = center.x + right.x * meta.sideOffset * sideSign + forward.x * meta.forwardOffset;
+  const z = center.z + right.z * meta.sideOffset * sideSign + forward.z * meta.forwardOffset;
+
+  return {
+    id: `landmark-${bookItem.id}`,
+    nodeId: bookItem.id,
+    type,
+    label: meta.label,
+    side,
+    description: `${side === 'left' ? '左' : '右'}に${meta.label}`,
+    x,
+    z,
+    scale: meta.scale,
+  };
+}
+
+export function generate(seed) {
+  const random = rng(seed);
+  const pts = [];
+  const adj = Array.from({ length: 25 }, () => []);
+  const edges = [];
+  const possible = [];
+
+  for (let z = 0; z < 5; z++) {
+    for (let x = 0; x < 5; x++) {
+      const id = z * 5 + x;
+      pts.push({
+        id,
+        x: (x - 2) * 59 + (random() - 0.5) * 15,
+        z: (z - 2) * 59 + (random() - 0.5) * 15,
+      });
+      if (x) possible.push([id - 1, id]);
+      if (z) possible.push([id - 5, id]);
     }
-    );
-    if(x)possible.push([id-1,id]);
-    if(z)possible.push([id-5,id]);
   }
-  const set=new Set([0]);
-  function link(a,b){
+
+  function link(a, b) {
     adj[a].push(b);
     adj[b].push(a);
-    edges.push([a,b]);
+    edges.push([a, b]);
   }
-  while(set.size<25){
-    const fringe=possible.filter(([a,b])=>set.has(a)!==set.has(b));
-    const[a,b]=fringe[Math.floor(r()*fringe.length)];
-    link(a,b);
-    set.add(a);
-    set.add(b)
+
+  const visitedSet = new Set([0]);
+  while (visitedSet.size < 25) {
+    const fringe = possible.filter(([a, b]) => visitedSet.has(a) !== visitedSet.has(b));
+    const [a, b] = fringe[Math.floor(random() * fringe.length)];
+    link(a, b);
+    visitedSet.add(a);
+    visitedSet.add(b);
   }
-  let parent=Array(25).fill(-1),q=[0],visited=new Set([0]);
-  for(let k=0;
-  k<q.length;
-  k++){
-    for(const n of adj[q[k]])if(!visited.has(n)){
-      visited.add(n);
-      parent[n]=q[k];
-      q.push(n)
+
+  const parent = Array(25).fill(-1);
+  const queue = [0];
+  const routeSearchVisited = new Set([0]);
+  for (let i = 0; i < queue.length; i++) {
+    for (const next of adj[queue[i]]) {
+      if (routeSearchVisited.has(next)) continue;
+      routeSearchVisited.add(next);
+      parent[next] = queue[i];
+      queue.push(next);
     }
   }
-  let route=[24];
-  while(route[0]!==0)route.unshift(parent[route[0]]);
-  for(const[a,b] of possible){
-    if(!adj[a].includes(b)&&r()<.24)link(a,b)
+
+  const route = [24];
+  while (route[0] !== 0) {
+    route.unshift(parent[route[0]]);
   }
-  let roads=[],total=0,curves={
+
+  for (const [a, b] of possible) {
+    if (!adj[a].includes(b) && random() < 0.24) {
+      link(a, b);
+    }
   }
-  ;
-  for(const[a,b] of edges){
-    let p=pts[a],t=pts[b],dx=t.x-p.x,dz=t.z-p.z,len=hypot(dx,dz),bend=(r()-.5)*14,poly=[];
-    for(let i=0;
-    i<=9;
-    i++){
-      let v=i/9,offset=Math.sin(Math.PI*v)*bend;
+
+  const roads = [];
+  const lengths = {};
+  for (const [a, b] of edges) {
+    const p = pts[a];
+    const t = pts[b];
+    const dx = t.x - p.x;
+    const dz = t.z - p.z;
+    const len = hypot(dx, dz);
+    const bend = (random() - 0.5) * 14;
+    const poly = [];
+
+    for (let i = 0; i <= 9; i++) {
+      const v = i / 9;
+      const offset = Math.sin(Math.PI * v) * bend;
       poly.push({
-        x:p.x+dx*v-dz/len*offset,z:p.z+dz*v+dx/len*offset
-      }
-      )
+        x: p.x + dx * v - (dz / len) * offset,
+        z: p.z + dz * v + (dx / len) * offset,
+      });
     }
-    let length=0;
-    for(let i=1;
-    i<poly.length;
-    i++)length+=hypot(poly[i].x-poly[i-1].x,poly[i].z-poly[i-1].z);
-    roads.push({
-      a,b,poly,length
+
+    let length = 0;
+    for (let i = 1; i < poly.length; i++) {
+      length += hypot(poly[i].x - poly[i - 1].x, poly[i].z - poly[i - 1].z);
     }
-    );
-    curves[a+','+b]=length;
-    curves[b+','+a]=length
+
+    roads.push({ a, b, poly, length });
+    lengths[`${a},${b}`] = length;
+    lengths[`${b},${a}`] = length;
   }
-  let mileage=0,book=[];
-  for(let i=0;
-  i<route.length;
-  i++){
-    let id=route[i];
-    if(i)mileage+=curves[route[i-1]+','+id];
+
+  let mileage = 0;
+  const book = [];
+  for (let i = 0; i < route.length; i++) {
+    const id = route[i];
+    if (i) {
+      mileage += lengths[`${route[i - 1]},${id}`];
+    }
     book.push({
-      id,km:mileage,prev:route[i-1],next:route[i+1],label:i===0?'スタート':i===route.length-1?'ゴール':pts[id].name
-    }
-    )
+      id,
+      km: mileage,
+      prev: route[i - 1],
+      next: route[i + 1],
+      label: i === 0 ? 'スタート' : i === route.length - 1 ? 'ゴール' : '分岐',
+    });
   }
-  total=mileage;
-  const dRoad=(x,z)=>{
-    let best=1e9;
-    for(const road of roads){
-      let pp=road.poly;
-      for(let i=1;
-      i<pp.length;
-      i++){
-        let a=pp[i-1],b=pp[i],dx=b.x-a.x,dz=b.z-a.z,t=clamp(((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz),0,1);
-        best=Math.min(best,hypot(x-a.x-dx*t,z-a.z-dz*t))
+
+  const landmarks = [];
+  for (const item of book) {
+    item.landmark = buildLandmark(item, pts, random);
+    if (item.landmark) {
+      landmarks.push(item.landmark);
+    }
+  }
+
+  const total = mileage;
+
+  const dRoad = (x, z) => {
+    let best = 1e9;
+    for (const road of roads) {
+      const pp = road.poly;
+      for (let i = 1; i < pp.length; i++) {
+        const a = pp[i - 1];
+        const b = pp[i];
+        const dx = b.x - a.x;
+        const dz = b.z - a.z;
+        const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz), 0, 1);
+        best = Math.min(best, hypot(x - a.x - dx * t, z - a.z - dz * t));
       }
     }
-    return best
-  }
-  ;
-  let trees=[],rocks=[];
-  for(let i=0;
-  i<560;
-  i++){
-    let x=(r()-.5)*390,z=(r()-.5)*390,near=dRoad(x,z);
-    if(near<8.5)continue;
+    return best;
+  };
+
+  const trees = [];
+  for (let i = 0; i < 560; i++) {
+    const x = (random() - 0.5) * 390;
+    const z = (random() - 0.5) * 390;
+    if (dRoad(x, z) < 8.5) continue;
     trees.push({
-      x,z,h:5+r()*9,s:r(),dark:r()
+      x,
+      z,
+      h: 5 + random() * 9,
+      dark: random(),
+    });
+  }
+
+  const rocks = [];
+  for (let i = 0; i < 85; i++) {
+    const x = (random() - 0.5) * 385;
+    const z = (random() - 0.5) * 385;
+    if (dRoad(x, z) > 6) {
+      rocks.push({ x, z, h: 0.5 + random() * 1.3 });
     }
-    )
   }
-  for(let i=0;
-  i<85;
-  i++){
-    let x=(r()-.5)*385,z=(r()-.5)*385;
-    if(dRoad(x,z)>6)rocks.push({
-      x,z,h:.5+r()*1.3
-    }
-    )
-  }
-  return{
-    seed,pts,roads,route,book,total,adj,trees,rocks,dRoad
-  }
-  ;
+
+  return {
+    seed,
+    pts,
+    roads,
+    route,
+    book,
+    total,
+    adj,
+    trees,
+    rocks,
+    landmarks,
+    dRoad,
+  };
 }
