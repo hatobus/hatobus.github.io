@@ -4,22 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>コマ図ウォーク | コマ図ウォーク</title>
-<link rel="stylesheet" href="./css/style.css?v=20261010-roadbook-large-v6">
+<link rel="stylesheet" href="./css/style.css?v=20261010-hints-v8">
 </head>
 <body>
-<div id="game">
+<div id="game" class="hints-off">
 <header>
 <div class="identity">
 <span class="logo">↱</span>
 <div>
-<div class="title">コマ図ウォーク <span style="font-size:11px;color:#c6e38d">α v0.5 · ROAD ONLY</span>
+<div class="title">コマ図ウォーク <span style="font-size:11px;color:#c6e38d">α v0.6 · HINTS</span>
 </div>
 <div class="sub">PROCEDURAL FOREST NAVIGATION</div>
 </div>
 </div>
 <div class="actions">
 <button id="new" class="highlight">↻ 新しいコース</button>
+<div class="stage-actions">
 <button id="mapbtn" class="secondary">地図（確認用）</button>
+<button id="restart" class="secondary" type="button">↺ スタート地点に戻る</button>
+</div>
 </div>
 </header>
 <div id="viewport">
@@ -62,9 +65,9 @@
 </div>
 </div>
 </div>
-<div class="restartbar">
-  <button id="restart" type="button" aria-label="同じコースをスタート地点からやり直す">↺ スタート地点に戻る</button>
-  <span>同じコースを最初からやり直します（距離・時間・コマ図をリセット）</span>
+<div class="hintbar">
+  <button id="hints" type="button" aria-pressed="false" aria-controls="feedback note landmarkrow">💡 ヒント OFF</button>
+  <span>近くの目印・コマ図の説明・現在の目印を表示／非表示</span>
 </div>
 <div id="below">
 <section class="panel">
@@ -97,16 +100,16 @@
 <span>コマ図の枚数</span>
 <strong id="notes">—</strong>
 </div>
-<div class="statrow">
+<div class="statrow" id="landmarkrow">
 <span>現在の目印</span>
 <strong id="landmark">—</strong>
 </div>
 <div class="info">PC：WASD移動／矢印左右で視点回転／↑↓でコマ送り／Fで走る切替／Rで戻る切替／Shiftを押しながら加速。画面ドラッグでも方向転換できます。<br>スマホ：左下の▲▼で移動・◀▶で方向転換。右下の「走る」は速度切替、「戻る」は移動距離の自動減算切替。コマ図は下のボタンで操作。</div>
-<div class="message">※ 自動生成の試遊版です。地図は通常非表示。道路外への移動はできません。道を間違えても警告は出ません。戻るモード中は歩く向きに関係なく移動した分だけTRIPを減算し、0m未満にはなりません。距離補正はメーター表示のみに反映されます。</div>
+<div class="message">※ ヒントは画面下のボタンで表示切替できます。地図は通常非表示。道路外への移動はできません。道を間違えても警告は出ません。戻るモード中は歩く向きに関係なく移動した分だけTRIPを減算し、0m未満にはなりません。距離補正はメーター表示のみに反映されます。</div>
 </section>
 </div>
 </div>
-<script type="module" src="./src/main.js?v=20261010-road-only-v7">
+<script type="module" src="./src/main.js?v=20261010-hints-v8">
 </script>
 </body>
 </html>

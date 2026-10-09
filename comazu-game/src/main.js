@@ -4,22 +4,31 @@ import { state, resetState } from './state.js?v=20261010-landmarks-v4';
 import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v4';
 import { renderNote, syncModes } from './roadbook.js?v=20261010-roadbook-large-v6';
 import { render, drawMap, resize } from './scene.js?v=20261010-landmarks-v4';
-import { setupInput } from './input.js?v=20261010-roadbook-large-v6';
+import { setupInput } from './input.js?v=20261010-hints-v8';
 import { moveWithinRoad } from './movement.js?v=20261010-road-only-v7';
 const el=(id)=>document.getElementById(id);
 
-function start(seed){
+function start(seed, preserveElapsed=false){
+  const elapsed = preserveElapsed && state.course ? state.secs : 0;
+  const hintsVisible = state.hintsVisible ?? false;
   let course=generate(seed),p=course.pts[course.route[0]],next=course.pts[course.route[1]];
   resetState({
-    course,x:p.x,z:p.z,yaw:Math.atan2(next.x-p.x,next.z-p.z),trip:0,actualDistance:0,returnMode:false,runMode:false,note:0,secs:0,started:performance.now(),passed:1,done:false,keys:new Set(),drag:false,hover:''
+    course,x:p.x,z:p.z,yaw:Math.atan2(next.x-p.x,next.z-p.z),trip:0,actualDistance:0,returnMode:false,runMode:false,note:0,secs:elapsed,hintsVisible,started:performance.now(),passed:1,done:false,keys:new Set(),drag:false,hover:''
   }
   );
+  el('clock').textContent=formatTime(elapsed);
+  el('trip').textContent='0.000';
   el('seed').textContent='SEED '+seed;
   el('distance').textContent=Math.round(course.total)+' m';
   el('notes').textContent=course.book.length+' コマ';
   el('win').classList.remove('on');
   el('mapwrap').classList.remove('on');
   el('mapbtn').textContent='地図（確認用）';
+  el('game').classList.toggle('hints-off', !hintsVisible);
+  const hintButton=el('hints');
+  hintButton.textContent=hintsVisible ? '💡 ヒント ON' : '💡 ヒント OFF';
+  hintButton.setAttribute('aria-pressed', String(hintsVisible));
+  hintButton.classList.toggle('on', hintsVisible);
   renderNote();
   syncModes();
   drawMap();

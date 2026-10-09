@@ -33,8 +33,16 @@ el('new').addEventListener('click',newCourse);
 el('again').addEventListener('click',newCourse);
 el('restart').addEventListener('click', () => {
   const currentSeed = state.course.seed;
-  start(currentSeed); // Same course; reset position, trip, time, roadbook and modes.
-  el('viewport').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  start(currentSeed, true); // Same course: reset position and trip; keep elapsed time.
+});
+el('hints').addEventListener('click', () => {
+  state.hintsVisible = !state.hintsVisible;
+  const shown = state.hintsVisible;
+  el('game').classList.toggle('hints-off', !shown);
+  const button = el('hints');
+  button.setAttribute('aria-pressed', String(shown));
+  button.textContent = shown ? '💡 ヒント ON' : '💡 ヒント OFF';
+  button.classList.toggle('on', shown);
 });
 el('mapbtn').addEventListener('click',()=>{
   let on=el('mapwrap').classList.toggle('on');

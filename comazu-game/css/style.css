@@ -445,8 +445,8 @@ button.highlight {
 }
 }
 
-/* Same-course restart appears immediately after the game viewport. */
-.restartbar {
+/* The hint switch is placed directly under the viewport. */
+.hintbar {
   display:flex;
   justify-content:center;
   align-items:center;
@@ -454,26 +454,49 @@ button.highlight {
   flex-wrap:wrap;
   padding:9px 0 2px;
 }
-.restartbar button {
+.hintbar button {
   padding:12px 18px;
   min-height:44px;
   border-color:#d4ed9e;
   background:#263f30;
   font-size:13px;
 }
-.restartbar span {
+.hintbar span {
   color:#acc2b0;
   font-size:11px;
 }
 @media(max-width:630px) {
-  .restartbar {
+  .hintbar {
     display:flex;
     flex-direction:column;
     gap:6px;
     padding:8px 3px 4px;
   }
-  .restartbar button {
+  .hintbar button {
     width:100%;
     font-size:14px;
+  }
+}
+/* Keep the reset control directly beside the debug map button, even on narrow screens. */
+.stage-actions {
+  display:flex;
+  gap:6px;
+  flex-wrap:nowrap;
+}
+.stage-actions button { white-space:nowrap; }
+.hintbar button.on {
+  background:#c7e786;
+  color:#1a2b21;
+  border-color:#d4ed9e;
+}
+/* Explanations only: the roadbook symbol, distance and route remain available. */
+#game.hints-off #feedback,
+#game.hints-off #note .detail,
+#game.hints-off #note .caption,
+#game.hints-off #landmarkrow { display:none; }
+@media(max-width:430px) {
+  .stage-actions button {
+    font-size:11px;
+    padding:8px 9px;
   }
 }
