@@ -2,40 +2,19 @@
 import { clamp, hypot, rng } from './math.js?v=20261010-landmarks-v4';
 import { roadDepartureCap } from './heading.js?v=20261010-cap-v9';
 
+// One landmark record is shared by the field, roadbook and debug map.
 export const LANDMARK_TYPES = {
-  pole: {
-    label: '白いポール',
-    sideOffset: 11,
-    forwardOffset: 4,
-    scale: 1.0,
-  },
-  rock: {
-    label: '大きな岩',
-    sideOffset: 12,
-    forwardOffset: 5,
-    scale: 1.35,
-  },
-  flag: {
-    label: '赤い旗',
-    sideOffset: 10,
-    forwardOffset: 6,
-    scale: 1.0,
-  },
-  stump: {
-    label: '切り株',
-    sideOffset: 10,
-    forwardOffset: 4,
-    scale: 1.45,
-  },
-  hut: {
-    label: '小さな小屋',
-    sideOffset: 15,
-    forwardOffset: 7,
-    scale: 1.15,
-  },
+  rock: { label: '大きな岩', sideOffset: 12, forwardOffset: 5, scale: 1.35 },
+  stump: { label: '切り株', sideOffset: 10, forwardOffset: 4, scale: 1.45 },
+  log: { label: '丸太', sideOffset: 12, forwardOffset: 6, scale: 1.2 },
+  sign: { label: '木製看板', sideOffset: 11, forwardOffset: 5, scale: 1.15 },
+  monument: { label: '石碑', sideOffset: 12, forwardOffset: 5, scale: 1.2 },
+  mirror: { label: 'カーブミラー', sideOffset: 10, forwardOffset: 5, scale: 1.1 },
+  hut: { label: '小さな小屋', sideOffset: 15, forwardOffset: 7, scale: 1.15 },
 };
 
-const LANDMARK_KEYS = Object.keys(LANDMARK_TYPES);
+// Natural features appear more often than man-made features.
+const LANDMARK_WEIGHTS = ['rock','rock','stump','stump','log','log','sign','sign','monument','mirror','hut'];
 
 function normalize(x, z) {
   const len = Math.hypot(x, z) || 1;
@@ -53,7 +32,7 @@ function buildLandmark(bookItem, pts, random) {
   const forward = normalize(center.x - prev.x, center.z - prev.z);
   const right = { x: forward.z, z: -forward.x };
 
-  const type = LANDMARK_KEYS[Math.floor(random() * LANDMARK_KEYS.length)];
+  const type = LANDMARK_WEIGHTS[Math.floor(random() * LANDMARK_WEIGHTS.length)];
   const meta = LANDMARK_TYPES[type];
   const side = random() < 0.5 ? 'left' : 'right';
   const sideSign = side === 'left' ? -1 : 1;
@@ -228,7 +207,7 @@ export function generate(seed) {
   for (let i = 0; i < 85; i++) {
     const x = (random() - 0.5) * 385;
     const z = (random() - 0.5) * 385;
-    if (dRoad(x, z) > 6) {
+    if (dRoad(x, z) > 6 && !landmarks.some(mark => hypot(x - mark.x, z - mark.z) < 5)) {
       rocks.push({ x, z, h: 0.5 + random() * 1.3 });
     }
   }

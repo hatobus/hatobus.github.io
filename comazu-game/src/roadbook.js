@@ -1,5 +1,5 @@
 // Roadbook canvas and trip / mode UI.
-import { LANDMARK_TYPES } from './course.js?v=20261010-cap-v9';
+import { LANDMARK_TYPES } from './course.js?v=20261010-landmark-variety-v10';
 import { state } from './state.js?v=20261010-landmarks-v4';
 import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
 import { formatCap } from './heading.js?v=20261010-cap-v9';
@@ -10,11 +10,8 @@ const paper = el('symbol').getContext('2d');
 // Larger icons help distinguish landmarks on phone-sized roadbooks.
 // Scales use the roadbook's 230×230 intrinsic canvas coordinates.
 const ROADBOOK_LANDMARK_SCALES = {
-  rock: 2.70,
-  stump: 2.85,
-  flag: 2.70,
-  pole: 2.75,
-  hut: 2.65,
+  rock: 2.70, stump: 2.85, log: 2.52, sign: 2.55,
+  monument: 2.65, mirror: 2.62, hut: 2.65,
 };
 
 export function syncModes() {
@@ -76,13 +73,49 @@ function drawLandmarkIcon(ctx, type, x, y, side = 'right', scale = 1) {
       ctx.stroke();
       break;
     }
-    case 'pole': {
-      ctx.fillStyle = '#f4f4f2';
-      ctx.fillRect(-2.5, -10, 5, 20);
-      ctx.fillStyle = '#d65f53';
-      ctx.fillRect(-3.5, -10, 7, 4);
-      ctx.strokeStyle = '#8ca0a8';
-      ctx.strokeRect(-2.5, -10, 5, 20);
+    case 'log': {
+      // The cut ends distinguish this from a stump.
+      ctx.fillStyle = '#72492e'; ctx.fillRect(-14, -5, 26, 11);
+      ctx.fillStyle = '#9a6c43';
+      ctx.beginPath(); ctx.ellipse(-13, 0.5, 4.6, 6, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#d0aa7c';
+      ctx.beginPath(); ctx.ellipse(12, 0.5, 4.6, 6, 0, 0, TAU); ctx.fill();
+      ctx.strokeStyle = '#8d633c';
+      ctx.beginPath(); ctx.ellipse(12, 0.5, 2.3, 3.2, 0, 0, TAU); ctx.stroke();
+      break;
+    }
+    case 'sign': {
+      ctx.fillStyle = '#6c4930'; ctx.fillRect(-2.4, -3, 4.8, 17);
+      ctx.fillStyle = '#b99159'; ctx.fillRect(-12, -12, 24, 13);
+      ctx.strokeStyle = '#6c4930'; ctx.strokeRect(-12, -12, 24, 13);
+      ctx.strokeStyle = '#60432a'; ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-8, -8); ctx.lineTo(8, -8);
+      ctx.moveTo(-8, -4); ctx.lineTo(4, -4); ctx.stroke();
+      break;
+    }
+    case 'monument': {
+      ctx.fillStyle = '#768078'; ctx.fillRect(-11, 8, 22, 5);
+      ctx.fillStyle = '#9fa69b';
+      ctx.beginPath();
+      ctx.moveTo(-7, 8); ctx.lineTo(-6, -12);
+      ctx.lineTo(7, -12); ctx.lineTo(8, 8);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#6d746d'; ctx.strokeRect(-11, 8, 22, 5);
+      ctx.lineWidth = 1.4; ctx.beginPath();
+      ctx.moveTo(-2, -7); ctx.lineTo(-2, 3);
+      ctx.moveTo(2, -6); ctx.lineTo(2, 2); ctx.stroke();
+      break;
+    }
+    case 'mirror': {
+      ctx.strokeStyle = '#b0a7a0'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, 13); ctx.lineTo(0, -4); ctx.stroke();
+      ctx.fillStyle = '#f3a357';
+      ctx.beginPath(); ctx.ellipse(0, -7, 10.5, 9, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#b8d4d8';
+      ctx.beginPath(); ctx.ellipse(0, -7, 7.3, 6.1, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#e5f3ee';
+      ctx.beginPath(); ctx.ellipse(-2.2, -9.4, 2.6, 1.3, -0.5, 0, TAU); ctx.fill();
       break;
     }
     case 'hut': {
@@ -97,23 +130,6 @@ function drawLandmarkIcon(ctx, type, x, y, side = 'right', scale = 1) {
       ctx.fill();
       ctx.fillStyle = '#4d3724';
       ctx.fillRect(-3, 4, 6, 9);
-      break;
-    }
-    case 'flag':
-    default: {
-      ctx.strokeStyle = '#6f624f';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(-6, 11);
-      ctx.lineTo(-6, -11);
-      ctx.stroke();
-      ctx.fillStyle = '#c1463a';
-      ctx.beginPath();
-      ctx.moveTo(-5, -10);
-      ctx.lineTo(12, -5);
-      ctx.lineTo(-5, 1);
-      ctx.closePath();
-      ctx.fill();
       break;
     }
   }

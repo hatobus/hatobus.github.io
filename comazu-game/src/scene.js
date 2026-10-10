@@ -58,11 +58,28 @@ function drawMapIcon(context, type, x, y, scale = 1) {
       context.ellipse(0, 0, 2.4, 1.6, 0, 0, TAU);
       context.stroke();
       break;
-    case 'pole':
-      context.fillStyle = '#f2f4f5';
-      context.fillRect(-1.5, -6, 3, 12);
-      context.fillStyle = '#db6556';
-      context.fillRect(-2.5, -6, 5, 3);
+    case 'log':
+      context.fillStyle = '#845d3e'; context.fillRect(-7, -3, 13, 6);
+      context.fillStyle = '#d6af80';
+      context.beginPath(); context.ellipse(6, 0, 3, 3.5, 0, 0, TAU); context.fill();
+      context.strokeStyle = '#926c48';
+      context.beginPath(); context.ellipse(6, 0, 1.5, 1.9, 0, 0, TAU); context.stroke();
+      break;
+    case 'sign':
+      context.fillStyle = '#765036'; context.fillRect(-1, -1, 2, 8);
+      context.fillStyle = '#d0a46e'; context.fillRect(-7, -7, 14, 8);
+      context.strokeStyle = '#68482d'; context.strokeRect(-7, -7, 14, 8);
+      break;
+    case 'monument':
+      context.fillStyle = '#85918b'; context.fillRect(-6, 3, 12, 3);
+      context.fillStyle = '#c0c9be'; context.fillRect(-4, -7, 8, 10);
+      context.fillStyle = '#6c7972'; context.fillRect(-1, -4, 2, 5);
+      break;
+    case 'mirror':
+      context.strokeStyle = '#adb8b6'; context.lineWidth = 2;
+      context.beginPath(); context.moveTo(0, 7); context.lineTo(0, -3); context.stroke();
+      context.fillStyle = '#f2a04c'; context.beginPath(); context.arc(0, -5, 6, 0, TAU); context.fill();
+      context.fillStyle = '#c4e0e5'; context.beginPath(); context.arc(0, -5, 4.1, 0, TAU); context.fill();
       break;
     case 'hut':
       context.fillStyle = '#c59a66';
@@ -72,21 +89,6 @@ function drawMapIcon(context, type, x, y, scale = 1) {
       context.moveTo(-6, -1);
       context.lineTo(0, -7);
       context.lineTo(6, -1);
-      context.closePath();
-      context.fill();
-      break;
-    case 'flag':
-    default:
-      context.strokeStyle = '#6f624f';
-      context.beginPath();
-      context.moveTo(-2, 6);
-      context.lineTo(-2, -6);
-      context.stroke();
-      context.fillStyle = '#c1463a';
-      context.beginPath();
-      context.moveTo(-1, -5);
-      context.lineTo(6, -3);
-      context.lineTo(-1, 0);
       context.closePath();
       context.fill();
       break;
@@ -205,18 +207,97 @@ export function render() {
             ctx.stroke();
             break;
           }
-          case 'pole': {
+          case 'log': {
             const base = project(v, 0);
-            const top = project(v, 2.6 * landmark.scale);
+            const top = project(v, 1.35 * landmark.scale);
             const h = base.y - top.y;
-            const w = Math.max(4, h * 0.1);
-            ctx.fillStyle = '#eff3f4';
-            ctx.fillRect(base.x - w / 2, top.y, w, h);
-            ctx.fillStyle = '#d6584a';
-            ctx.fillRect(base.x - w * 0.7, top.y, w * 1.4, h * 0.22);
-            ctx.strokeStyle = '#90a0a5';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(base.x - w / 2, top.y, w, h);
+            if (h < 2) break;
+            const w = h * 2.0;
+            ctx.fillStyle = '#6c462d';
+            ctx.fillRect(base.x - w * 0.55, top.y + h * 0.3, w, h * 0.65);
+            ctx.fillStyle = '#97704a';
+            ctx.beginPath();
+            ctx.ellipse(base.x - w * 0.55, top.y + h * 0.62, h * 0.18, h * 0.32, 0, 0, TAU);
+            ctx.fill();
+            ctx.fillStyle = '#d1a675';
+            ctx.beginPath();
+            ctx.ellipse(base.x + w * 0.45, top.y + h * 0.62, h * 0.18, h * 0.32, 0, 0, TAU);
+            ctx.fill();
+            ctx.strokeStyle = '#987149';
+            ctx.lineWidth = Math.max(1, h * 0.035);
+            ctx.beginPath();
+            ctx.ellipse(base.x + w * 0.45, top.y + h * 0.62, h * 0.10, h * 0.21, 0, 0, TAU);
+            ctx.stroke();
+            break;
+          }
+          case 'sign': {
+            const base = project(v, 0);
+            const top = project(v, 3.0 * landmark.scale);
+            const h = base.y - top.y;
+            const w = h * 0.75;
+            ctx.fillStyle = '#61462f';
+            ctx.fillRect(base.x - h * 0.04, top.y + h * 0.16, h * 0.08, h * 0.84);
+            ctx.fillStyle = '#b8945e';
+            ctx.fillRect(base.x - w * 0.52, top.y + h * 0.11, w * 1.04, h * 0.34);
+            ctx.strokeStyle = '#63462f';
+            ctx.lineWidth = Math.max(1, h * 0.025);
+            ctx.strokeRect(base.x - w * 0.52, top.y + h * 0.11, w * 1.04, h * 0.34);
+            ctx.beginPath();
+            ctx.moveTo(base.x - w * 0.33, top.y + h * 0.22);
+            ctx.lineTo(base.x + w * 0.3, top.y + h * 0.22);
+            ctx.moveTo(base.x - w * 0.33, top.y + h * 0.33);
+            ctx.lineTo(base.x + w * 0.1, top.y + h * 0.33);
+            ctx.stroke();
+            break;
+          }
+          case 'monument': {
+            const base = project(v, 0);
+            const top = project(v, 2.4 * landmark.scale);
+            const h = base.y - top.y;
+            const w = h * 0.42;
+            ctx.fillStyle = '#778078';
+            ctx.fillRect(base.x - w * 0.7, base.y - h * 0.15, w * 1.4, h * 0.15);
+            ctx.fillStyle = '#aab1a7';
+            ctx.beginPath();
+            ctx.moveTo(base.x - w * 0.48, base.y - h * 0.16);
+            ctx.lineTo(base.x - w * 0.42, top.y);
+            ctx.lineTo(base.x + w * 0.42, top.y);
+            ctx.lineTo(base.x + w * 0.48, base.y - h * 0.16);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#68736d';
+            ctx.lineWidth = Math.max(1, h * 0.025);
+            ctx.beginPath();
+            ctx.moveTo(base.x - w * 0.10, top.y + h * 0.22);
+            ctx.lineTo(base.x - w * 0.10, top.y + h * 0.68);
+            ctx.moveTo(base.x + w * 0.09, top.y + h * 0.25);
+            ctx.lineTo(base.x + w * 0.09, top.y + h * 0.62);
+            ctx.stroke();
+            break;
+          }
+          case 'mirror': {
+            const base = project(v, 0);
+            const top = project(v, 3.0 * landmark.scale);
+            const h = base.y - top.y;
+            const radius = h * 0.19;
+            ctx.strokeStyle = '#a9b6b2';
+            ctx.lineWidth = Math.max(2, h * 0.045);
+            ctx.beginPath();
+            ctx.moveTo(base.x, base.y);
+            ctx.lineTo(base.x, top.y + radius);
+            ctx.stroke();
+            ctx.fillStyle = '#e9933b';
+            ctx.beginPath();
+            ctx.ellipse(base.x, top.y + radius, radius * 1.15, radius, 0, 0, TAU);
+            ctx.fill();
+            ctx.fillStyle = '#b9dbe3';
+            ctx.beginPath();
+            ctx.ellipse(base.x, top.y + radius, radius * 0.85, radius * 0.73, 0, 0, TAU);
+            ctx.fill();
+            ctx.fillStyle = '#e3f4f0';
+            ctx.beginPath();
+            ctx.ellipse(base.x - radius * 0.27, top.y + radius * 0.65, radius * 0.28, radius * 0.13, -0.3, 0, TAU);
+            ctx.fill();
             break;
           }
           case 'hut': {
@@ -235,26 +316,6 @@ export function render() {
             ctx.fill();
             ctx.fillStyle = '#4b3727';
             ctx.fillRect(base.x - w * 0.1, top.y + h * 0.63, w * 0.2, h * 0.37);
-            break;
-          }
-          case 'flag':
-          default: {
-            const base = project(v, 0);
-            const top = project(v, 2.9 * landmark.scale);
-            const h = base.y - top.y;
-            ctx.strokeStyle = '#6d624e';
-            ctx.lineWidth = Math.max(2, h * 0.04);
-            ctx.beginPath();
-            ctx.moveTo(base.x, base.y);
-            ctx.lineTo(base.x, top.y);
-            ctx.stroke();
-            ctx.fillStyle = '#c1453a';
-            ctx.beginPath();
-            ctx.moveTo(base.x, top.y + h * 0.08);
-            ctx.lineTo(base.x + h * 0.5, top.y + h * 0.2);
-            ctx.lineTo(base.x, top.y + h * 0.34);
-            ctx.closePath();
-            ctx.fill();
             break;
           }
         }

@@ -1,6 +1,6 @@
 // Keyboard, mouse and touch event bindings.
 import { state } from './state.js?v=20261010-landmarks-v4';
-import { note, syncModes } from './roadbook.js?v=20261010-cap-v9';
+import { note, syncModes } from './roadbook.js?v=20261010-landmark-variety-v10';
 import { drawMap } from './scene.js?v=20261010-landmarks-v4';
 const el=(id)=>document.getElementById(id);
 
