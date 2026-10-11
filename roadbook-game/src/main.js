@@ -1,10 +1,10 @@
 // Application entrypoint / frame loop.
-import { generate } from './course.js?v=20261010-landmark-variety-v10';
+import { generate } from './course.js?v=20261012-sparse-roadbook-v11';
 import { state, resetState } from './state.js?v=20261010-landmarks-v4';
 import { clamp, hypot, formatTime } from './math.js?v=20261010-landmarks-v4';
-import { renderNote, syncModes } from './roadbook.js?v=20261010-landmark-variety-v10';
+import { renderNote, syncModes } from './roadbook.js?v=20261012-sparse-roadbook-v11';
 import { render, drawMap, resize } from './scene.js?v=20261010-landmark-variety-v10';
-import { setupInput } from './input.js?v=20261010-hints-v8';
+import { setupInput } from './input.js?v=20261012-sparse-roadbook-v11';
 import { moveWithinRoad } from './movement.js?v=20261010-road-only-v7';
 import { capFromYaw, formatCap } from './heading.js?v=20261010-cap-v9';
 const el=(id)=>document.getElementById(id);

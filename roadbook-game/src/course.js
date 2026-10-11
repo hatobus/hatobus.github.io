@@ -53,6 +53,17 @@ function buildLandmark(bookItem, pts, random) {
   };
 }
 
+// Roadbook convention: if the route continues approximately straight at a junction,
+// the rider proceeds without a separate note. The irregular grid needs tolerance.
+const STRAIGHT_COSINE = Math.cos(40 * Math.PI / 180);
+export function isStraightThrough(prev, current, next) {
+  const ax = current.x - prev.x;
+  const az = current.z - prev.z;
+  const bx = next.x - current.x;
+  const bz = next.z - current.z;
+  return ax * bx + az * bz >= STRAIGHT_COSINE * hypot(ax, az) * hypot(bx, bz);
+}
+
 export function generate(seed) {
   const random = rng(seed);
   const pts = [];
@@ -147,6 +158,11 @@ export function generate(seed) {
     const id = route[i];
     if (i) {
       mileage += lengths[`${route[i - 1]},${id}`];
+    }
+    // The physical route and cumulative mileage include skipped junctions.
+    if (i > 0 && i < route.length - 1 &&
+        isStraightThrough(pts[route[i - 1]], pts[id], pts[route[i + 1]])) {
+      continue;
     }
     book.push({
       id,

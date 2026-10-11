@@ -1,5 +1,5 @@
 // Roadbook canvas and trip / mode UI.
-import { LANDMARK_TYPES } from './course.js?v=20261010-landmark-variety-v10';
+import { LANDMARK_TYPES } from './course.js?v=20261012-sparse-roadbook-v11';
 import { state } from './state.js?v=20261010-landmarks-v4';
 import { TAU, clamp, hypot } from './math.js?v=20261010-landmarks-v4';
 import { formatCap } from './heading.js?v=20261010-cap-v9';
@@ -161,7 +161,7 @@ export function renderNote() {
     entry.next === undefined
       ? 'この地点がゴールです。'
       : entry.prev === undefined
-        ? 'ここから出発。最初の分岐と目印を探してください。'
+        ? 'ここから出発。直進する交差点のコマは省略されています。次のコマの距離を確認してください。'
         : entry.landmark
           ? `分岐で ${entry.landmark.description} を探して進みます。`
           : '分岐と目印を確認して、強調された方向へ進んでください。';
