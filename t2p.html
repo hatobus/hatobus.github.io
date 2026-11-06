@@ -34,7 +34,7 @@
 <main>
   <section class="card">
     <h1>Text to PNG for Rally Navigator</h1>
-    <p>空行で区切ったテキストを、中央寄せのPNGとして複数生成します。ZIPで一括ダウンロードできます。</p>
+    <p>空行で区切ったテキストを、中央寄せのPNGとして複数生成します。ZIPで一括ダウンロードできます。Rally Navigatorの .rn2 ファイルから説明文を取り込むこともできます。</p>
   </section>
 
   <section class="card">
@@ -50,6 +50,10 @@
     <br>
     <label for="file">Load .txt file</label>
     <input type="file" id="file" accept=".txt,text/plain" />
+    <br>
+    <label for="rn2File">Load Rally Navigator .rn2 file</label>
+    <input type="file" id="rn2File" accept=".rn2,.json,application/json" aria-describedby="rn2Status" />
+    <p id="rn2Status" class="hint" role="status" aria-live="polite">各コマの説明文（notes内のText）をルート順に取り込みます。読み込むと上のテキストを置き換えます。ファイルはサーバーに送信しません。</p>
   </section>
 
   <section class="card grid">
@@ -131,6 +135,46 @@
       generatePreviews();
     };
     reader.readAsText(file);
+  });
+
+  function extractRn2Notes(raw) {
+    const data = JSON.parse(raw.replace(/^\uFEFF/, ''));
+    if (!Array.isArray(data?.route?.waypoints)) {
+      throw new Error('route.waypoints が見つかりません。Rally Navigatorの .rn2 ファイルを選択してください。');
+    }
+    return data.route.waypoints.flatMap(waypoint => {
+      const elements = waypoint?.notes?.elements;
+      if (!Array.isArray(elements)) return [];
+      const text = elements
+        .filter(element => element?.type === 'Text' && typeof element.text === 'string')
+        .map(element => element.text.replace(/\r\n?/g, '\n').trim())
+        .filter(Boolean)
+        .join('\n');
+      return text ? [text] : [];
+    });
+  }
+
+  $('rn2File').addEventListener('change', async () => {
+    const file = $('rn2File').files[0];
+    if (!file) return;
+    const status = $('rn2Status');
+    status.textContent = '読み込み中…';
+    try {
+      const notes = extractRn2Notes(await file.text());
+      if (!notes.length) {
+        status.textContent = '説明文（Text）が見つかりませんでした。入力中のテキストは保持しました。';
+        return;
+      }
+      $('text').value = notes.join('\n\n');
+      generatePreviews();
+      status.textContent = `${notes.length}コマの説明文を取り込みました。編集してPNG・ZIPを保存できます。`;
+    } catch (error) {
+      status.textContent = error instanceof SyntaxError
+        ? '読み込めませんでした。JSON形式の .rn2 ファイルを選択してください。'
+        : `読み込めませんでした: ${error.message}`;
+    } finally {
+      $('rn2File').value = '';
+    }
   });
 
   function hash10(str) {
